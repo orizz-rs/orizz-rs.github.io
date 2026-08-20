@@ -3,6 +3,7 @@ import { getIntegrationExample } from "./docs/integrationExamples";
 import {
   Accordion,
   Alert,
+  AsyncCombobox,
   Avatar,
   Badge,
   Breadcrumb,
@@ -14,17 +15,25 @@ import {
   Combobox,
   CurrencyInput,
   DataTable,
+  DatePicker,
   Dialog,
   Divider,
   EmptyState,
+  Fieldset,
+  FileUpload,
+  Form,
+  FormActions,
   FormField,
   LoadingOverlay,
+  MultiSelect,
   NavigationMenu,
   NumberInput,
   Pagination,
   PageHeader,
+  PercentageInput,
   Popover,
   Progress,
+  QuantityInput,
   Radio,
   ResultState,
   Select,
@@ -37,6 +46,7 @@ import {
   Tabs,
   TextField,
   Textarea,
+  TimeInput,
   Toast,
   Timeline,
   Toolbar,
@@ -86,7 +96,7 @@ const componentGroups = [
   ["Actions", "Button"],
   [
     "Forms",
-    "TextField · Textarea · Select · Checkbox · Radio · Switch · FormField · NumberInput · CurrencyInput · Combobox",
+    "TextField · Textarea · Select · Checkbox · Radio · Switch · FormField · Fieldset · Form · NumberInput · CurrencyInput · PercentageInput · QuantityInput · DatePicker · TimeInput · Combobox · AsyncCombobox · MultiSelect · FileUpload",
   ],
   [
     "Feedback",
@@ -165,6 +175,16 @@ const componentReferenceGroups: readonly ComponentCategory[] = [
         example: '<FormField label="Name">...</FormField>',
       },
       {
+        name: "Fieldset",
+        use: "Group related controls under a semantic legend and description",
+        example: '<Fieldset legend="Notifications"><Checkbox label="Weekly summary" /></Fieldset>',
+      },
+      {
+        name: "Form",
+        use: "Compose submission state, form-level errors, fields, and actions",
+        example: '<Form onSubmit={handleSubmit}><TextField label="Name" /><FormActions><Button type="submit">Save</Button></FormActions></Form>',
+      },
+      {
         name: "NumberInput",
         use: "Collect numeric values with onValueChange",
         example: '<NumberInput label="Quantity" onValueChange={setQuantity} />',
@@ -175,9 +195,44 @@ const componentReferenceGroups: readonly ComponentCategory[] = [
         example: '<CurrencyInput label="Price" currency="THB" />',
       },
       {
+        name: "PercentageInput",
+        use: "Collect percentages with numeric parsing and a percent suffix",
+        example: '<PercentageInput label="Discount" defaultValue={10} min={0} max={100} />',
+      },
+      {
+        name: "QuantityInput",
+        use: "Collect numeric quantities with a visible unit",
+        example: '<QuantityInput label="Weight" unit="kg" defaultValue={25} min={0} />',
+      },
+      {
+        name: "DatePicker",
+        use: "Collect a calendar date with a labeled native date input",
+        example: '<DatePicker label="Delivery date" />',
+      },
+      {
+        name: "TimeInput",
+        use: "Collect a time value with a labeled native time input",
+        example: '<TimeInput label="Cut-off time" />',
+      },
+      {
         name: "Combobox",
         use: "Search and select an option with keyboard navigation",
         example: '<Combobox label="Warehouse" options={warehouses} />',
+      },
+      {
+        name: "AsyncCombobox",
+        use: "Load searchable options asynchronously from a backend",
+        example: '<AsyncCombobox label="Supplier" loadOptions={loadSuppliers} />',
+      },
+      {
+        name: "MultiSelect",
+        use: "Search and select multiple values with removable selections",
+        example: '<MultiSelect label="Teams" options={teams} />',
+      },
+      {
+        name: "FileUpload",
+        use: "Select and validate one or more files before upload",
+        example: '<FileUpload label="Invoices" accept="application/pdf" multiple maxFiles={3} />',
       },
     ],
   },
@@ -475,7 +530,7 @@ function LandingPage({ onDocs }: LandingPageProps): JSX.Element {
           <span className="eyebrow">@orizz-rs/ui</span>
           <h2>One shared foundation for every Orizz product.</h2>
           <p>
-            37 typed components, shared semantic tokens, and light/dark themes.
+            46 typed components, shared semantic tokens, and light/dark themes.
           </p>
           <Button onClick={onDocs}>Open the UI library docs →</Button>
         </section>
@@ -517,7 +572,7 @@ function DocsSite({ onHome }: DocsSiteProps): JSX.Element {
         </button>
         <span className="header-caption">Design system documentation</span>
         <div className="header-actions">
-          <Badge tone="success">v0.2.1</Badge>
+          <Badge tone="success">v0.2.4</Badge>
           <a
             href="https://github.com/orizz-rs/orizz-ui"
             target="_blank"
@@ -1145,7 +1200,11 @@ function ComponentDetail({ component }: ComponentDetailProps): JSX.Element {
     group.components.some((item) => item.name === component.name),
   );
   const integrationExample = getIntegrationExample(component.name);
-  const needsExpandedPreview = component.name === "Combobox" || component.name === "Popover";
+  const needsExpandedPreview =
+    component.name === "Combobox" ||
+    component.name === "AsyncCombobox" ||
+    component.name === "MultiSelect" ||
+    component.name === "Popover";
   return (
     <DocPage eyebrow={category?.name ?? "Component"} title={component.name} description={component.use}>
       <Card className={`live-card ${needsExpandedPreview ? "live-card--expanded" : ""}`}>
@@ -1210,9 +1269,18 @@ function ComponentPreview({ name }: ComponentPreviewProps): JSX.Element {
     case "Radio": return <div className="playground-stack"><Radio name="preview-plan" value="starter" label="Starter plan" defaultChecked /><Radio name="preview-plan" value="pro" label="Professional plan" /></div>;
     case "Switch": return <Switch label="Product analytics" description="Share anonymous usage data." defaultChecked />;
     case "FormField": return <FormField label="Purchase order note" htmlFor="component-note" required hint="Add context for approvers."><input id="component-note" placeholder="Add a note" /></FormField>;
+    case "Fieldset": return <Fieldset legend="Email notifications" description="Choose which updates you receive."><div className="playground-stack"><Checkbox label="Weekly summary" defaultChecked /><Checkbox label="Approval requests" /></div></Fieldset>;
+    case "Form": return <Form onSubmit={(event) => event.preventDefault()}><div className="playground-stack"><TextField label="Project name" placeholder="Operations workspace" /><FormActions><Button type="submit">Create project</Button></FormActions></div></Form>;
     case "NumberInput": return <NumberInput label="Quantity" defaultValue={12} min={0} step={1} />;
     case "CurrencyInput": return <CurrencyInput label="Unit price" currency="THB" defaultValue={1250} min={0} />;
+    case "PercentageInput": return <PercentageInput label="Discount" defaultValue={10} min={0} max={100} />;
+    case "QuantityInput": return <QuantityInput label="Package weight" unit="kg" defaultValue={25} min={0} />;
+    case "DatePicker": return <DatePicker label="Delivery date" defaultValue="2026-08-24" />;
+    case "TimeInput": return <TimeInput label="Daily cut-off" defaultValue="16:30" />;
     case "Combobox": return <Combobox label="Warehouse" options={warehouses} placeholder="Search warehouse…" fullWidth />;
+    case "AsyncCombobox": return <AsyncCombobox label="Supplier" loadOptions={(query) => Promise.resolve(warehouses.filter((option) => option.label.toLowerCase().includes(query.toLowerCase())))} placeholder="Search suppliers…" fullWidth />;
+    case "MultiSelect": return <MultiSelect label="Team access" options={warehouses} defaultValue={["bkk"]} placeholder="Select teams…" fullWidth />;
+    case "FileUpload": return <FileUpload label="Invoice PDFs" accept="application/pdf" multiple maxFiles={3} hint="Up to 10 MB per file." fullWidth />;
     case "Alert": return <Alert tone="warning" title="Review access">Two invitations expire tomorrow.</Alert>;
     case "Badge": return <div className="component-row"><Badge tone="brand">New</Badge><Badge tone="success">Healthy</Badge><Badge tone="warning">Review</Badge><Badge tone="danger">Blocked</Badge></div>;
     case "Spinner": return <div className="inline-items"><Spinner size="sm" label="Small loading" /><Spinner size="md" label="Medium loading" /><Spinner size="lg" label="Large loading" /></div>;

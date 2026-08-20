@@ -5,7 +5,7 @@
     "": {
       "name": "orizz-github.io",
       "dependencies": {
-        "@orizz-rs/ui": "^0.2.1",
+        "@orizz-rs/ui": "^0.2.4",
         "react": "^19.2.8",
         "react-dom": "^19.2.8",
       },
@@ -94,7 +94,7 @@
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
 
-    "@orizz-rs/ui": ["@orizz-rs/ui@0.2.1", "", { "peerDependencies": { "react": ">=18.2.0 <20", "react-dom": ">=18.2.0 <20" } }, "sha512-3oYNJEu5JBEtLm7LByh0xNKKwn4SboS0NyY5KagUgXhPWF3bbUNaqcAyUURN2aHWMdMdI27F7ThT6S055o+CQg=="],
+    "@orizz-rs/ui": ["@orizz-rs/ui@0.2.4", "", { "peerDependencies": { "react": ">=18.2.0 <20", "react-dom": ">=18.2.0 <20" } }, "sha512-ZwnrfHQzv1/MxA0rMczYSN2PlT+bAmyg+2yKOqFIQigNFdSS6rhg5t0pM62NyJ9XiOk2H3nTJSwCeush1+rPSA=="],
 
     "@oxc-project/types": ["@oxc-project/types@0.146.0", "", {}, "sha512-XC0QsnnhVe7sLIWmYmdPw7x5P0h4W8vUU3Nv1ySgWXtvCz8NizoAEpGXA0sOYoJQV2Rl13LgURAHQ5cI5ILCSA=="],
 

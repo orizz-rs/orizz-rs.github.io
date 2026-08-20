@@ -172,6 +172,128 @@ export function WarehouseCombobox(): JSX.Element {
   }, [])
   return <Combobox label="Warehouse" options={options} value={value} onValueChange={setValue} loading={loading} />
 }`,
+  AsyncCombobox: `import { AsyncCombobox, type ComboboxOption } from '@orizz-rs/ui'
+
+async function loadSuppliers(query: string): Promise<readonly ComboboxOption[]> {
+  const response = await fetch('/api/suppliers?query=' + encodeURIComponent(query))
+  if (!response.ok) throw new Error('Unable to load suppliers')
+  const data: ComboboxOption[] = await response.json()
+  return data
+}
+
+export function SupplierSearch(): JSX.Element {
+  return <AsyncCombobox label="Supplier" loadOptions={loadSuppliers} onValueChange={(supplierId) => {
+    void fetch('/api/orders/draft/supplier', {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ supplierId }),
+    })
+  }} />
+}`,
+  MultiSelect: `import { useState } from 'react'
+import { MultiSelect, type MultiSelectOption } from '@orizz-rs/ui'
+
+const options: readonly MultiSelectOption[] = [
+  { value: 'finance', label: 'Finance' },
+  { value: 'operations', label: 'Operations' },
+]
+
+export function TeamAccess(): JSX.Element {
+  const [teams, setTeams] = useState<readonly string[]>([])
+  async function update(values: readonly string[]): Promise<void> {
+    setTeams(values)
+    await fetch('/api/members/usr-01/teams', {
+      method: 'PUT', body: JSON.stringify({ teams: values }),
+    })
+  }
+  return <MultiSelect label="Team access" options={options} value={teams} onValueChange={(values) => void update(values)} />
+}`,
+  DatePicker: `import { useState } from 'react'
+import { DatePicker } from '@orizz-rs/ui'
+
+export function DeliveryDate(): JSX.Element {
+  const [date, setDate] = useState('')
+  async function update(value: string): Promise<void> {
+    setDate(value)
+    await fetch('/api/orders/po-1004/delivery-date', {
+      method: 'PATCH', body: JSON.stringify({ deliveryDate: value }),
+    })
+  }
+  return <DatePicker label="Delivery date" value={date} onChange={(event) => void update(event.currentTarget.value)} />
+}`,
+  TimeInput: `import { useState } from 'react'
+import { TimeInput } from '@orizz-rs/ui'
+
+export function WarehouseCutoff(): JSX.Element {
+  const [time, setTime] = useState('16:30')
+  return <TimeInput label="Daily cut-off" value={time} onChange={(event) => {
+    const value = event.currentTarget.value
+    setTime(value)
+    void fetch('/api/warehouses/bkk/cutoff', { method: 'PATCH', body: JSON.stringify({ time: value }) })
+  }} />
+}`,
+  PercentageInput: `import { useState } from 'react'
+import { PercentageInput } from '@orizz-rs/ui'
+
+export function DiscountInput(): JSX.Element {
+  const [discount, setDiscount] = useState<number | null>(10)
+  return <PercentageInput label="Discount" value={discount ?? ''} min={0} max={100} onValueChange={(value) => {
+    setDiscount(value)
+    void fetch('/api/quotes/q-1004/discount', { method: 'PATCH', body: JSON.stringify({ discount: value }) })
+  }} />
+}`,
+  QuantityInput: `import { useState } from 'react'
+import { QuantityInput } from '@orizz-rs/ui'
+
+export function PackageWeight(): JSX.Element {
+  const [weight, setWeight] = useState<number | null>(25)
+  return <QuantityInput label="Package weight" unit="kg" value={weight ?? ''} min={0} onValueChange={(value) => {
+    setWeight(value)
+    void fetch('/api/shipments/draft/weight', { method: 'PATCH', body: JSON.stringify({ weightKg: value }) })
+  }} />
+}`,
+  Fieldset: `import { Checkbox, Fieldset } from '@orizz-rs/ui'
+
+export function NotificationPreferences(): JSX.Element {
+  return <Fieldset legend="Email notifications" description="Choose which updates you receive.">
+    <Checkbox label="Weekly summary" onChange={(event) => {
+      void fetch('/api/settings/notifications', { method: 'PATCH', body: JSON.stringify({ weekly: event.currentTarget.checked }) })
+    }} />
+    <Checkbox label="Approval requests" />
+  </Fieldset>
+}`,
+  Form: `import { useState, type FormEvent } from 'react'
+import { Button, Form, FormActions, TextField } from '@orizz-rs/ui'
+
+export function CreateProjectForm(): JSX.Element {
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string>()
+  async function submit(event: FormEvent<HTMLFormElement>): Promise<void> {
+    event.preventDefault()
+    setSubmitting(true)
+    const response = await fetch('/api/projects', { method: 'POST', body: new FormData(event.currentTarget) })
+    setSubmitting(false)
+    if (!response.ok) setError('Project could not be created')
+  }
+  return <Form onSubmit={(event) => void submit(event)} error={error} isSubmitting={submitting}>
+    <TextField label="Project name" name="name" />
+    <FormActions><Button type="submit" isLoading={submitting}>Create project</Button></FormActions>
+  </Form>
+}`,
+  FileUpload: `import { useState } from 'react'
+import { Button, FileUpload } from '@orizz-rs/ui'
+
+export function InvoiceUpload(): JSX.Element {
+  const [files, setFiles] = useState<readonly File[]>([])
+  async function upload(): Promise<void> {
+    const body = new FormData()
+    files.forEach((file) => body.append('invoices', file))
+    await fetch('/api/invoices/import', { method: 'POST', body })
+  }
+  return <div>
+    <FileUpload label="Invoice PDFs" files={files} onFilesChange={setFiles} accept="application/pdf" multiple maxFiles={5} />
+    <Button disabled={files.length === 0} onClick={() => void upload()}>Upload invoices</Button>
+  </div>
+}`,
   Alert: `import { useState } from 'react'
 import { Alert, Button } from '@orizz-rs/ui'
 
