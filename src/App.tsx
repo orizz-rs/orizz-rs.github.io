@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type JSX } from "react";
+import { useEffect, useMemo, useRef, useState, type JSX } from "react";
 import { getIntegrationExample } from "./docs/integrationExamples";
 import {
   Accordion,
@@ -116,230 +116,230 @@ interface ComponentCategory {
 const componentReferenceGroups: readonly ComponentCategory[] = [
   {
     name: "Actions",
-    description: "การกระทำหลักของผู้ใช้และ destructive actions",
+    description: "Primary, secondary, and destructive user actions",
     components: [
       {
         name: "Button",
-        use: "action หลัก, รอง, ghost และ destructive พร้อม loading state",
+        use: "Primary, secondary, ghost, and destructive actions with a loading state",
         example: '<Button variant="primary">Save</Button>',
       },
     ],
   },
   {
     name: "Forms",
-    description: "รับข้อมูลโดยยึด native HTML semantics",
+    description: "Collect input with native HTML semantics",
     components: [
       {
         name: "TextField",
-        use: "input ข้อความบรรทัดเดียว",
+        use: "Single-line text input",
         example: '<TextField label="Email" />',
       },
       {
         name: "Textarea",
-        use: "ข้อความหลายบรรทัด",
+        use: "Multi-line text input",
         example: '<Textarea label="Notes" />',
       },
       {
         name: "Select",
-        use: "เลือกค่าจากรายการแบบ native select",
+        use: "Choose a value with a native select",
         example: '<Select label="Role"><option>Admin</option></Select>',
       },
       {
         name: "Checkbox",
-        use: "เลือกหลายรายการหรือค่า boolean",
+        use: "Choose multiple values or represent a boolean",
         example: '<Checkbox label="Weekly summary" />',
       },
       {
         name: "Radio",
-        use: "เลือกค่าเดียวจากกลุ่ม",
+        use: "Choose one value from a group",
         example: '<Radio name="plan" label="Starter" />',
       },
       {
         name: "Switch",
-        use: "เปิด/ปิด setting",
+        use: "Turn a setting on or off",
         example: '<Switch label="Analytics" />',
       },
       {
         name: "FormField",
-        use: "รวม label, hint, required และ error",
+        use: "Compose a label, hint, required indicator, and error message",
         example: '<FormField label="Name">...</FormField>',
       },
       {
         name: "NumberInput",
-        use: "รับตัวเลขพร้อม onValueChange",
+        use: "Collect numeric values with onValueChange",
         example: '<NumberInput label="Quantity" onValueChange={setQuantity} />',
       },
       {
         name: "CurrencyInput",
-        use: "รับจำนวนเงินพร้อม currency adornment",
+        use: "Collect monetary values with a currency adornment",
         example: '<CurrencyInput label="Price" currency="THB" />',
       },
       {
         name: "Combobox",
-        use: "ค้นหาและเลือก option พร้อม keyboard navigation",
+        use: "Search and select an option with keyboard navigation",
         example: '<Combobox label="Warehouse" options={warehouses} />',
       },
     ],
   },
   {
     name: "Feedback",
-    description: "สื่อสารสถานะ การโหลด และทางแก้ไขให้ผู้ใช้",
+    description: "Communicate status, loading, and recovery paths",
     components: [
       {
         name: "Alert",
-        use: "ข้อความสถานะหรือคำเตือนใน context เดิม",
+        use: "Show contextual status messages and warnings",
         example: '<Alert tone="warning" title="Review access">...</Alert>',
       },
       {
         name: "Badge",
-        use: "label สั้น ๆ และ status",
+        use: "Display short labels and statuses",
         example: '<Badge tone="success">Active</Badge>',
       },
       {
         name: "Spinner",
-        use: "loading ระยะสั้นของ action หรือพื้นที่เล็ก",
+        use: "Indicate short loading states for an action or compact area",
         example: '<Spinner label="Loading" />',
       },
       {
         name: "Toast",
-        use: "feedback ชั่วคราวหลัง action สำเร็จ",
+        use: "Show temporary feedback after an action",
         example: '<Toast open={open} title="Saved" />',
       },
       {
         name: "Skeleton",
-        use: "placeholder ระหว่างโหลดข้อมูล",
+        use: "Reserve content space while data loads",
         example: '<Skeleton variant="rect" label="Loading card" />',
       },
       {
         name: "EmptyState",
-        use: "ไม่มีข้อมูลหรือยังไม่มี resource",
+        use: "Explain when no data or resource exists yet",
         example: '<EmptyState title="No projects" />',
       },
       {
         name: "ResultState",
-        use: "success, error หรือ result ที่ต้องทำ action ต่อ",
+        use: "Present success, error, or actionable result states",
         example: '<ResultState tone="success" title="Approved" />',
       },
       {
         name: "Progress",
-        use: "แสดงความคืบหน้าของ workflow",
+        use: "Show progress through a task or workflow",
         example: '<Progress value={65} label="Approval" />',
       },
       {
         name: "LoadingOverlay",
-        use: "ล็อกและแสดง loading บนพื้นที่ content",
+        use: "Block a content area while an operation is in progress",
         example: "<LoadingOverlay open={loading}>...</LoadingOverlay>",
       },
     ],
   },
   {
     name: "Content",
-    description: "จัดกลุ่ม content และแสดง identity",
+    description: "Group related content and represent identity",
     components: [
       {
         name: "Card",
-        use: "grouping ของ content ที่เกี่ยวข้องกัน",
+        use: "Group related content",
         example: "<Card><CardContent>...</CardContent></Card>",
       },
       {
         name: "Avatar",
-        use: "identity ของ user หรือ entity",
+        use: "Represent a user or entity",
         example: '<Avatar alt="Kong" fallback="KS" />',
       },
       {
         name: "Divider",
-        use: "แบ่งกลุ่ม content",
+        use: "Separate groups of content",
         example: "<Divider decorative />",
       },
     ],
   },
   {
     name: "Navigation",
-    description: "โครงสร้าง wayfinding และ application shell",
+    description: "Wayfinding, workflows, and application shell structure",
     components: [
       {
         name: "Breadcrumb",
-        use: "แสดงตำแหน่งปัจจุบันใน hierarchy",
+        use: "Show the current location in a hierarchy",
         example: "<Breadcrumb items={items} />",
       },
       {
         name: "Tabs",
-        use: "สลับมุมมองใน context เดียวกัน",
+        use: "Switch between views in the same context",
         example: "<Tabs items={tabs} />",
       },
       {
         name: "Pagination",
-        use: "เปลี่ยนหน้าของ collection",
+        use: "Move between pages in a collection",
         example:
           "<Pagination currentPage={1} totalPages={5} onPageChange={setPage} />",
       },
       {
         name: "Sidebar",
-        use: "navigation หลักของ application shell",
+        use: "Provide primary navigation for an application shell",
         example: "<Sidebar groups={groups} />",
       },
       {
         name: "NavigationMenu",
-        use: "เมนู navigation แบบขยายหรือยุบได้",
+        use: "Build expandable and collapsible navigation menus",
         example: "<NavigationMenu items={items} />",
       },
       {
         name: "PageHeader",
-        use: "title, description และ actions ของหน้า",
+        use: "Present a page title, description, and actions",
         example: '<PageHeader title="Orders" />',
       },
       {
         name: "Toolbar",
-        use: "รวม filter และ actions ที่เกี่ยวข้อง",
+        use: "Group related filters and actions",
         example:
           "<Toolbar start={<span>6 rows</span>} end={<Button>Filter</Button>} />",
       },
       {
         name: "SplitPane",
-        use: "แบ่งพื้นที่หลักและรายละเอียด",
+        use: "Divide primary and detail content areas",
         example: "<SplitPane first={<List />} second={<Detail />} />",
       },
       {
         name: "Stepper",
-        use: "แสดงขั้นตอนของ workflow",
+        use: "Show the steps in a workflow",
         example: '<Stepper items={steps} current="review" />',
       },
       {
         name: "Timeline",
-        use: "แสดงลำดับเหตุการณ์และ audit history",
+        use: "Show chronological events and audit history",
         example: "<Timeline items={events} />",
       },
     ],
   },
   {
     name: "Overlays & disclosure",
-    description: "interaction ชั่วคราวและ content ที่เปิด/ปิดได้",
+    description: "Temporary interactions and disclosed content",
     components: [
       {
         name: "Dialog",
-        use: "modal interaction ที่ต้องตัดสินใจหรือกรอกข้อมูล",
+        use: "Request a decision or input in a modal interaction",
         example: '<Dialog open={open} title="Confirm">...</Dialog>',
       },
       {
         name: "Popover",
-        use: "content ชั่วคราวที่ผูกกับ trigger",
+        use: "Show temporary content anchored to a trigger",
         example:
           "<Popover open={open} trigger={<Button>Filter</Button>}>...</Popover>",
       },
       {
         name: "Accordion",
-        use: "เปิด/ปิด content หลาย section",
+        use: "Expand and collapse multiple content sections",
         example: "<Accordion items={sections} />",
       },
     ],
   },
   {
     name: "Data display",
-    description: "แสดงข้อมูล typed พร้อม interaction สำหรับ collection",
+    description: "Display typed collections with built-in interactions",
     components: [
       {
         name: "DataTable",
-        use: "ตาราง typed พร้อม sorting, filtering, pagination และ selection",
+        use: "Render typed data with sorting, filtering, pagination, and selection",
         example: '<DataTable data={members} caption="Members" selectable />',
       },
     ],
@@ -411,26 +411,25 @@ function LandingPage({ onDocs }: LandingPageProps): JSX.Element {
         <section className="landing-hero">
           <Badge tone="brand">Orizz RS</Badge>
           <h1>
-            สร้างระบบงานที่ชัดเจนขึ้น
+            Build clearer systems.
             <br />
-            <em>ด้วยโครงสร้างที่ทีมไว้ใจได้</em>
+            <em>With foundations your team can trust.</em>
           </h1>
           <p>
-            Orizz RS
-            สร้างเครื่องมือและพื้นฐานซอฟต์แวร์สำหรับผลิตภัณฑ์ที่ต้องทำงานจริงในทุกวัน
-            ตั้งแต่ design system, reusable components ไปจนถึง workflow
-            สำหรับระบบธุรกิจ
+            Orizz RS builds tools and software foundations for products that do
+            real work every day—from design systems and reusable components to
+            workflows for business applications.
           </p>
           <div className="hero-actions">
             <Button size="lg" onClick={onDocs}>
-              สำรวจ component library →
+              Explore the component library →
             </Button>
             <Button
               variant="ghost"
               size="lg"
               onClick={() => principlesRef.current?.scrollIntoView({ behavior: "smooth" })}
             >
-              อ่านแนวทางของ Orizz
+              Read the Orizz principles
             </Button>
           </div>
         </section>
@@ -438,36 +437,36 @@ function LandingPage({ onDocs }: LandingPageProps): JSX.Element {
           <Card variant="elevated">
             <CardHeader>
               <span className="eyebrow">01 / Product foundations</span>
-              <h2>สร้างได้เร็วขึ้น</h2>
+              <h2>Ship faster</h2>
             </CardHeader>
             <CardContent>
               <p>
-                พื้นฐานที่ช่วยให้ทีมสร้าง application ได้เร็วขึ้น
-                โดยยังคงความสม่ำเสมอของ UI, accessibility และการดูแลระยะยาว
+                Reusable foundations help teams build applications faster while
+                preserving UI consistency, accessibility, and maintainability.
               </p>
             </CardContent>
           </Card>
           <Card variant="elevated">
             <CardHeader>
               <span className="eyebrow">02 / ERP-ready experiences</span>
-              <h2>พร้อมสำหรับงานจริง</h2>
+              <h2>Ready for real work</h2>
             </CardHeader>
             <CardContent>
               <p>
-                เครื่องมือสำหรับหน้าข้อมูลจำนวนมาก, แบบฟอร์มธุรกรรม, approval
-                workflow และ application shell ที่ขยายต่อได้
+                Tools for data-heavy screens, transaction forms, approval
+                workflows, and application shells that scale with the product.
               </p>
             </CardContent>
           </Card>
           <Card variant="elevated">
             <CardHeader>
               <span className="eyebrow">03 / Calm, clear interfaces</span>
-              <h2>ลดความสับสน</h2>
+              <h2>Reduce complexity</h2>
             </CardHeader>
             <CardContent>
               <p>
-                เราเชื่อว่า software ที่ดีควรลดความสับสน ไม่เพิ่มภาระทางความคิด
-                และทำให้ action ถัดไปชัดเจน
+                We believe good software should reduce confusion, lower
+                cognitive load, and make the next action clear.
               </p>
             </CardContent>
           </Card>
@@ -478,7 +477,7 @@ function LandingPage({ onDocs }: LandingPageProps): JSX.Element {
           <p>
             37 typed components, shared semantic tokens, and light/dark themes.
           </p>
-          <Button onClick={onDocs}>เปิดเอกสาร UI library →</Button>
+          <Button onClick={onDocs}>Open the UI library docs →</Button>
         </section>
       </main>
       <footer className="docs-footer">
@@ -700,41 +699,175 @@ function GettingStarted(): JSX.Element {
     <DocPage
       eyebrow="Getting started"
       title="Ship your first screen."
-      description="Install @orizz-rs/ui, choose a theme, and compose typed components in a React application."
+      description="Install @orizz-rs/ui, load its shared styles once, and compose typed components in a React application."
     >
-      <CodeBlock
-        code={`bun add @orizz-rs/ui\n\nimport { Button, DataTable } from '@orizz-rs/ui'`}
-      />
-      <section className="section-grid">
-        <Card>
-          <CardHeader>
-            <span className="eyebrow">01 / Install</span>
-            <h2>Use the public package</h2>
-          </CardHeader>
-          <CardContent>
-            <p>
-              The package entry includes component styles, design tokens,
-              themes, and Bai Jamjuree for CSS-aware bundlers.
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <span className="eyebrow">02 / Theme</span>
-            <h2>Set the context</h2>
-          </CardHeader>
-          <CardContent>
-            <CodeBlock
-              code={
-                '<div data-theme="dark">\n  <Button>Continue</Button>\n</div>'
-              }
-            />
-          </CardContent>
-        </Card>
+      <Alert tone="info" title="React is required.">
+        Use React 18.2 or newer. The package provides components and styles;
+        your application continues to own routing, data fetching, and state.
+      </Alert>
+
+      <section className="setup-section">
+        <div className="setup-heading">
+          <span className="eyebrow">01 / Install</span>
+          <h2>Add the public package</h2>
+          <p>Install the library with the package manager used by your project.</p>
+        </div>
+        <CodeBlock
+          code={`bun add @orizz-rs/ui
+
+# npm install @orizz-rs/ui
+# pnpm add @orizz-rs/ui`}
+        />
       </section>
+
+      <section className="setup-section">
+        <div className="setup-heading">
+          <span className="eyebrow">02 / Styles</span>
+          <h2>Import the stylesheet in main.tsx</h2>
+          <p>
+            Import the package stylesheet once at the application entry point.
+            It contains Bai Jamjuree, design tokens, component styles, and the
+            light and dark themes.
+          </p>
+        </div>
+        <div className="setup-file">
+          <span>src/main.tsx</span>
+          <CodeBlock
+            code={`import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import '@orizz-rs/ui/styles.css'
+import App from './App'
+import './index.css'
+
+const root = document.getElementById('root')
+
+if (!root) {
+  throw new Error('Root element was not found')
+}
+
+createRoot(root).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)`}
+          />
+        </div>
+        <p className="setup-note">
+          Keep your application stylesheet after the package stylesheet so
+          local token overrides and application layout rules take precedence.
+        </p>
+      </section>
+
+      <section className="setup-section">
+        <div className="setup-heading">
+          <span className="eyebrow">03 / Compose</span>
+          <h2>Import components from the public entry</h2>
+          <p>
+            Import every component and exported type directly from
+            <code>@orizz-rs/ui</code>. Event handlers use native React event
+            behavior, so components can connect to application state or API
+            requests normally.
+          </p>
+        </div>
+        <div className="setup-file">
+          <span>src/App.tsx</span>
+          <CodeBlock
+            code={`import { useState, type JSX } from 'react'
+import { Alert, Button, TextField } from '@orizz-rs/ui'
+
+export default function App(): JSX.Element {
+  const [name, setName] = useState('')
+  const [saved, setSaved] = useState(false)
+
+  function handleSave(): void {
+    setSaved(true)
+  }
+
+  return (
+    <main>
+      <TextField
+        label="Project name"
+        value={name}
+        onChange={(event) => setName(event.currentTarget.value)}
+      />
+      <Button disabled={!name.trim()} onClick={handleSave}>
+        Create project
+      </Button>
+      {saved ? <Alert tone="success">Project created.</Alert> : null}
+    </main>
+  )
+}`}
+          />
+        </div>
+      </section>
+
+      <section className="setup-section">
+        <div className="setup-heading">
+          <span className="eyebrow">04 / Theme</span>
+          <h2>Choose automatic or explicit theming</h2>
+          <p>
+            With no theme attribute, the tokens follow the operating system
+            through <code>prefers-color-scheme</code>. Set
+            <code>data-theme</code> on the document root when users choose a
+            theme explicitly.
+          </p>
+        </div>
+        <section className="section-grid">
+          <Card>
+            <CardHeader>
+              <span className="eyebrow">Automatic</span>
+              <h3>Follow the system</h3>
+            </CardHeader>
+            <CardContent>
+              <CodeBlock code={'<html lang="en">'} />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <span className="eyebrow">Explicit</span>
+              <h3>Set light or dark</h3>
+            </CardHeader>
+            <CardContent>
+              <CodeBlock
+                code={`document.documentElement.dataset.theme = 'dark'
+
+// Return to the system preference
+delete document.documentElement.dataset.theme`}
+              />
+            </CardContent>
+          </Card>
+        </section>
+      </section>
+
+      <section className="setup-section">
+        <div className="setup-heading">
+          <span className="eyebrow">05 / Customize</span>
+          <h2>Override semantic tokens</h2>
+          <p>
+            Prefer semantic tokens over component selectors. This keeps custom
+            branding consistent across every component and both themes.
+          </p>
+        </div>
+        <div className="setup-file">
+          <span>src/index.css</span>
+          <CodeBlock
+            code={`:root,
+[data-theme='light'] {
+  --orizz-color-brand: #106b39;
+  --orizz-color-background: #f3f7f4;
+}
+
+[data-theme='dark'] {
+  --orizz-color-brand: #48c879;
+  --orizz-color-background: #0b1510;
+}`}
+          />
+        </div>
+      </section>
+
       <Alert tone="success" title="Ready for local development.">
-        Use Vite for the playground, Storybook for isolated component docs, and
-        run lint, tests, typecheck, and build before release.
+        Start the application and verify keyboard focus, validation, loading,
+        empty, and error states in both light and dark themes.
       </Alert>
     </DocPage>
   );
@@ -748,7 +881,8 @@ function IntegrationGuide(): JSX.Element {
       description="Patterns for loading data, submitting forms, handling events, and keeping backend state visible to users."
     >
       <Alert tone="info" title="Keep server state explicit.">
-        แยก loading, error และ success state ให้ชัด และตรวจ response.ok ก่อนนำข้อมูลจาก API ไปแสดงเสมอ
+        Keep loading, error, and success states distinct, and always check
+        response.ok before rendering data returned by an API.
       </Alert>
       <section className="component-doc-section">
         <span className="eyebrow">Fetch data</span>
@@ -970,7 +1104,10 @@ function ComponentReferenceDocs({ onSelectComponent }: ComponentsProps): JSX.Ele
           <span className="eyebrow">API reference</span>
           <h2 id="component-reference-title">Components by category</h2>
         </div>
-        <p>เริ่มจากคำอธิบายการใช้งาน แล้วดู usage ที่เหมาะกับแต่ละ component</p>
+        <p>
+          Start with each component's purpose, then review the usage pattern
+          that fits your interface.
+        </p>
       </div>
       <div className="reference-groups">
         {componentReferenceGroups.map((group) => (
@@ -1031,12 +1168,12 @@ function ComponentDetail({ component }: ComponentDetailProps): JSX.Element {
         <CodeBlock code={integrationExample} />
       </section>
       <section className="section-grid">
-        <Card><CardHeader><span className="eyebrow">States</span><h2>What to document</h2></CardHeader><CardContent><p>ตรวจสอบ default, hover, focus-visible และ disabled เสมอ รวม loading, error หรือ empty state เมื่อ component รองรับ</p></CardContent></Card>
-        <Card><CardHeader><span className="eyebrow">Accessibility</span><h2>Native semantics first</h2></CardHeader><CardContent><p>กำหนด accessible name ให้ชัด ใช้งานด้วย keyboard ได้ และอย่าใช้สีเพียงอย่างเดียวในการสื่อความหมาย</p></CardContent></Card>
+        <Card><CardHeader><span className="eyebrow">States</span><h2>What to document</h2></CardHeader><CardContent><p>Always verify default, hover, focus-visible, and disabled states. Include loading, error, and empty states when the component supports them.</p></CardContent></Card>
+        <Card><CardHeader><span className="eyebrow">Accessibility</span><h2>Native semantics first</h2></CardHeader><CardContent><p>Provide a clear accessible name, support keyboard interaction, and never use color as the only way to communicate meaning.</p></CardContent></Card>
       </section>
       <section className="do-dont">
-        <Card><CardHeader><Badge tone="success">Do</Badge><h2>Use semantic intent</h2></CardHeader><CardContent><p>เลือก component จากหน้าที่และบริบทของงาน พร้อม label และข้อความช่วยที่บอกสิ่งที่จะเกิดขึ้น</p></CardContent></Card>
-        <Card><CardHeader><Badge tone="danger">Don't</Badge><h2>Rebuild the primitive</h2></CardHeader><CardContent><p>อย่าสร้าง interaction เดิมด้วย div หรือ hard-code สี เพราะจะเสีย keyboard behavior, theme และ accessibility contract</p></CardContent></Card>
+        <Card><CardHeader><Badge tone="success">Do</Badge><h2>Use semantic intent</h2></CardHeader><CardContent><p>Choose a component for its purpose and context. Add labels and supporting text that make the result of an action clear.</p></CardContent></Card>
+        <Card><CardHeader><Badge tone="danger">Don't</Badge><h2>Rebuild the primitive</h2></CardHeader><CardContent><p>Do not recreate an existing interaction with a div or hard-coded colors. Doing so breaks keyboard behavior, theming, and the accessibility contract.</p></CardContent></Card>
       </section>
     </DocPage>
   );
@@ -1622,11 +1759,209 @@ function DocPage({
     </>
   );
 }
-function CodeBlock({ code }: { readonly code: string }): JSX.Element {
+type CodeLanguage = "tsx" | "css" | "html" | "shell";
+type SyntaxKind =
+  | "attribute"
+  | "comment"
+  | "function"
+  | "keyword"
+  | "number"
+  | "operator"
+  | "property"
+  | "string"
+  | "tag";
+
+interface HighlightPart {
+  readonly id: string;
+  readonly kind?: SyntaxKind;
+  readonly value: string;
+}
+
+interface CodeBlockProps {
+  readonly code: string;
+  readonly language?: CodeLanguage;
+}
+
+const syntaxKeywords = new Set([
+  "async",
+  "await",
+  "catch",
+  "const",
+  "delete",
+  "else",
+  "export",
+  "extends",
+  "false",
+  "finally",
+  "for",
+  "from",
+  "function",
+  "if",
+  "import",
+  "in",
+  "interface",
+  "let",
+  "new",
+  "null",
+  "readonly",
+  "return",
+  "throw",
+  "true",
+  "try",
+  "type",
+  "undefined",
+]);
+
+function detectCodeLanguage(code: string): CodeLanguage {
+  const source = code.trimStart();
+
+  if (/^(bun|npm|pnpm|yarn)\s/m.test(source)) return "shell";
+  if (/^<html\b/i.test(source)) return "html";
+  if (/^(:root|\[data-theme|\.[a-z-]+\s*\{|@media\b)/i.test(source)) {
+    return "css";
+  }
+
+  return "tsx";
+}
+
+function classifySyntaxToken(
+  value: string,
+  source: string,
+  end: number,
+): SyntaxKind | undefined {
+  if (
+    value.startsWith("//") ||
+    value.startsWith("/*") ||
+    value.startsWith("<!--")
+  ) {
+    return "comment";
+  }
+  if (/^["'`]/.test(value)) return "string";
+  if (/^<\/?[A-Za-z]/.test(value)) return "tag";
+  if (/^--[A-Za-z]/.test(value)) return "property";
+  if (/^\d/.test(value)) return "number";
+  if (syntaxKeywords.has(value)) return "keyword";
+  if (/^[{}()[\].,:;=<>/+*?!|&-]+$/.test(value)) return "operator";
+
+  if (/^[A-Za-z_$]/.test(value)) {
+    const nextCharacter = source.slice(end).trimStart().charAt(0);
+    if (nextCharacter === "(") return "function";
+    if (nextCharacter === "=") return "attribute";
+    if (nextCharacter === ":") return "property";
+  }
+
+  return undefined;
+}
+
+function highlightCode(code: string): readonly HighlightPart[] {
+  const tokenPattern =
+    /\/\*[\s\S]*?\*\/|\/\/[^\n]*|<!--[\s\S]*?-->|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`|<\/?[A-Za-z][\w.-]*|--[A-Za-z][\w-]*|\b\d+(?:\.\d+)?\b|\b[A-Za-z_$][\w$-]*\b|[{}()[\].,:;=<>/+*?!|&-]+/g;
+  const parts: HighlightPart[] = [];
+  let cursor = 0;
+  let match = tokenPattern.exec(code);
+
+  while (match) {
+    const start = match.index;
+    const value = match[0];
+
+    if (start > cursor) {
+      parts.push({
+        id: `plain-${cursor}-${start}`,
+        value: code.slice(cursor, start),
+      });
+    }
+
+    parts.push({
+      id: `token-${start}-${tokenPattern.lastIndex}`,
+      kind: classifySyntaxToken(value, code, tokenPattern.lastIndex),
+      value,
+    });
+    cursor = tokenPattern.lastIndex;
+    match = tokenPattern.exec(code);
+  }
+
+  if (cursor < code.length) {
+    parts.push({
+      id: `plain-${cursor}-${code.length}`,
+      value: code.slice(cursor),
+    });
+  }
+
+  return parts;
+}
+
+function CodeBlock({ code, language }: CodeBlockProps): JSX.Element {
+  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">(
+    "idle",
+  );
+  const resetTimerRef = useRef<number | null>(null);
+  const resolvedLanguage = language ?? detectCodeLanguage(code);
+  const highlightedParts = useMemo(() => highlightCode(code), [code]);
+
+  useEffect(() => {
+    return () => {
+      if (resetTimerRef.current !== null) {
+        window.clearTimeout(resetTimerRef.current);
+      }
+    };
+  }, []);
+
+  function scheduleStatusReset(): void {
+    if (resetTimerRef.current !== null) {
+      window.clearTimeout(resetTimerRef.current);
+    }
+    resetTimerRef.current = window.setTimeout(() => setCopyStatus("idle"), 1800);
+  }
+
+  async function handleCopy(): Promise<void> {
+    try {
+      if (!navigator.clipboard) throw new Error("Clipboard is unavailable");
+      await navigator.clipboard.writeText(code);
+      setCopyStatus("copied");
+    } catch {
+      setCopyStatus("error");
+    }
+    scheduleStatusReset();
+  }
+
+  const copyLabel =
+    copyStatus === "copied"
+      ? "Copied"
+      : copyStatus === "error"
+        ? "Copy failed"
+        : "Copy";
+
   return (
-    <pre className="code-block">
-      <code>{code}</code>
-    </pre>
+    <div className="code-block">
+      <div className="code-block-toolbar">
+        <span>{resolvedLanguage}</span>
+        <button
+          className={`code-copy-button ${copyStatus === "copied" ? "is-copied" : ""}`}
+          type="button"
+          aria-label="Copy code to clipboard"
+          onClick={() => void handleCopy()}
+        >
+          <svg aria-hidden="true" viewBox="0 0 20 20">
+            <path d="M6.5 5.5V3.75c0-.69.56-1.25 1.25-1.25h8.5c.69 0 1.25.56 1.25 1.25v8.5c0 .69-.56 1.25-1.25 1.25H14.5" />
+            <rect x="2.5" y="6.5" width="11" height="11" rx="1.25" />
+          </svg>
+          <span aria-live="polite">{copyLabel}</span>
+        </button>
+      </div>
+      <pre>
+        <code>
+          {highlightedParts.map((part) =>
+            part.kind ? (
+              <span className={`syntax-${part.kind}`} key={part.id}>
+                {part.value}
+              </span>
+            ) : (
+              <span key={part.id}>{part.value}</span>
+            ),
+          )}
+        </code>
+      </pre>
+    </div>
   );
 }
 
