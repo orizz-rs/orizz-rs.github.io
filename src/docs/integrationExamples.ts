@@ -514,6 +514,96 @@ export function OrdersTable(): JSX.Element {
   async function archive(): Promise<void> { await fetch('/api/orders/archive', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids: selectedIds }) }); setSelectedIds([]) }
   return <DataTable data={orders} loading={loading} getRowId={(row) => row.id} selectable selectedRowIds={selectedIds} onSelectionChange={setSelectedIds} selectionActions={<Button onClick={() => void archive()}>Archive</Button>} />
 }`,
+  TreeView: `import { useState } from 'react'
+import { TreeView, type TreeNode } from '@orizz-rs/ui'
+
+const categories: readonly TreeNode[] = [
+  { id: 'inventory', label: 'Inventory', children: [
+    { id: 'raw-materials', label: 'Raw materials' },
+    { id: 'finished-goods', label: 'Finished goods' },
+  ]},
+]
+
+export function CategoryBrowser(): JSX.Element {
+  const [selectedId, setSelectedId] = useState<string>()
+  function select(node: TreeNode): void {
+    setSelectedId(node.id)
+    void fetch('/api/analytics/category', { method: 'POST', body: JSON.stringify({ id: node.id }) })
+  }
+  return <TreeView items={categories} onNodeSelect={select} />
+}`,
+  CodeEditor: `import { useState } from 'react'
+import { Button, CodeEditor } from '@orizz-rs/ui'
+
+export function MigrationEditor(): JSX.Element {
+  const [value, setValue] = useState('ALTER TABLE orders ADD COLUMN notes TEXT;')
+  async function runMigration(): Promise<void> {
+    await fetch('/api/migrations', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sql: value }) })
+  }
+  return <div>
+    <CodeEditor label="Migration" language="sql" value={value} onValueChange={setValue} />
+    <Button onClick={() => void runMigration()}>Run migration</Button>
+  </div>
+}`,
+  ConnectionForm: `import { useState } from 'react'
+import { ConnectionForm, type ConnectionValues } from '@orizz-rs/ui'
+
+export function DatabaseSetup(): JSX.Element {
+  const [open, setOpen] = useState(true)
+  async function connect(values: ConnectionValues): Promise<void> {
+    await fetch('/api/database/connect', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(values),
+    })
+    setOpen(false)
+  }
+  return <ConnectionForm open={open} onOpenChange={setOpen} onConnect={(values) => void connect(values)} />
+}`,
+  QueryEditor: `import { useState } from 'react'
+import { Button, QueryEditor } from '@orizz-rs/ui'
+
+export function QueryWorkspace(): JSX.Element {
+  const [sql, setSql] = useState('SELECT * FROM orders WHERE status = \\'pending\\'')
+  async function run(): Promise<void> {
+    await fetch('/api/query', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sql }) })
+  }
+  return <div>
+    <QueryEditor value={sql} onValueChange={setSql} />
+    <Button onClick={() => void run()}>Run query</Button>
+  </div>
+}`,
+  ResultsGrid: `import { ResultsGrid, type ResultColumn, type ResultRow } from '@orizz-rs/ui'
+
+const columns: readonly ResultColumn[] = [
+  { id: 'id', name: 'ID' },
+  { id: 'supplier', name: 'Supplier' },
+  { id: 'amount', name: 'Amount' },
+]
+
+const rows: readonly ResultRow[] = [
+  { id: 'po-1001', supplier: 'Acme Corp', amount: 12500 },
+]
+
+export function OrderResults(): JSX.Element {
+  return <ResultsGrid columns={columns} rows={rows} />
+}`,
+  SchemaTree: `import { useState } from 'react'
+import { SchemaTree, type DbNode } from '@orizz-rs/ui'
+
+const schema: readonly DbNode[] = [
+  { id: 'db', name: 'production', type: 'schema' },
+  { id: 'orders-table', name: 'orders', type: 'table' },
+  { id: 'orders-id', name: 'id', type: 'column' },
+  { id: 'orders-status', name: 'status', type: 'column' },
+]
+
+export function SchemaBrowser(): JSX.Element {
+  const [selected, setSelected] = useState<string>()
+  return <SchemaTree items={schema} onNodeSelect={(node) => {
+    setSelected(node.id)
+    void fetch('/api/analytics/schema-click', { method: 'POST', body: JSON.stringify({ id: node.id, type: node.type }) })
+  }} />
+}`,
 };
 
 export function getIntegrationExample(name: string): string {

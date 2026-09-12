@@ -50,6 +50,12 @@ import {
   Toast,
   Timeline,
   Toolbar,
+  TreeView,
+  CodeEditor,
+  ConnectionForm,
+  QueryEditor,
+  ResultsGrid,
+  SchemaTree,
   type TabItem,
 } from "@orizz-rs/ui";
 type DocId =
@@ -108,7 +114,11 @@ const componentGroups = [
     "Breadcrumb · Tabs · Pagination · Sidebar · NavigationMenu · PageHeader · Toolbar · SplitPane · Stepper · Timeline",
   ],
   ["Overlays", "Dialog · Popover · Accordion"],
-  ["Data display", "DataTable"],
+  ["Data display", "DataTable · TreeView"],
+  [
+    "Compositions",
+    "CodeEditor · ConnectionForm · QueryEditor · ResultsGrid · SchemaTree",
+  ],
 ] as const;
 
 interface ComponentReference {
@@ -397,6 +407,42 @@ const componentReferenceGroups: readonly ComponentCategory[] = [
         use: "Render typed data with sorting, filtering, pagination, and selection",
         example: '<DataTable data={members} caption="Members" selectable />',
       },
+      {
+        name: "TreeView",
+        use: "Render hierarchical tree data with expand, collapse, and selection",
+        example: '<TreeView items={nodes} onNodeSelect={handleSelect} />',
+      },
+    ],
+  },
+  {
+    name: "Compositions",
+    description: "Higher-level compositions built from multiple primitives",
+    components: [
+      {
+        name: "CodeEditor",
+        use: "Edit source code with syntax highlighting and language detection",
+        example: '<CodeEditor label="Migration" language="rust" value={code} onValueChange={setCode} />',
+      },
+      {
+        name: "ConnectionForm",
+        use: "Collect database connection details for supported engines",
+        example: '<ConnectionForm open={open} onOpenChange={setOpen} onConnect={handleConnect} />',
+      },
+      {
+        name: "QueryEditor",
+        use: "Write and split SQL queries with autocomplete support",
+        example: '<QueryEditor value={sql} onValueChange={setSql} />',
+      },
+      {
+        name: "ResultsGrid",
+        use: "Display query results with sorting, formatting, and export",
+        example: '<ResultsGrid columns={columns} rows={rows} />',
+      },
+      {
+        name: "SchemaTree",
+        use: "Browse database schemas, tables, and columns",
+        example: '<SchemaTree items={nodes} onNodeSelect={handleSelect} />',
+      },
     ],
   },
 ];
@@ -530,7 +576,8 @@ function LandingPage({ onDocs }: LandingPageProps): JSX.Element {
           <span className="eyebrow">@orizz-rs/ui</span>
           <h2>One shared foundation for every Orizz product.</h2>
           <p>
-            46 typed components, shared semantic tokens, and light/dark themes.
+            52 typed components and compositions, shared semantic tokens, and
+            light/dark themes.
           </p>
           <Button onClick={onDocs}>Open the UI library docs →</Button>
         </section>
@@ -572,7 +619,7 @@ function DocsSite({ onHome }: DocsSiteProps): JSX.Element {
         </button>
         <span className="header-caption">Design system documentation</span>
         <div className="header-actions">
-          <Badge tone="success">v0.2.4</Badge>
+          <Badge tone="success">v0.3.0</Badge>
           <a
             href="https://github.com/orizz-rs/orizz-ui"
             target="_blank"
@@ -1307,6 +1354,12 @@ function ComponentPreview({ name }: ComponentPreviewProps): JSX.Element {
     case "Popover": return <Popover open={open} onOpenChange={setOpen} trigger={<Button variant="secondary">Open filters</Button>} title="Filter status"><Select label="Status" defaultValue="all"><option value="all">All statuses</option><option value="pending">Pending</option></Select></Popover>;
     case "Accordion": return <Accordion items={[{ id: "approval", title: "Approval workflow", content: "Pending orders route to the assigned approver." }, { id: "audit", title: "Audit information", content: "Changes are recorded with actor and timestamp." }]} />;
     case "DataTable": return <DataTable<Member> data={members} caption="Members" getRowId={(row) => row.id} selectable pageSize={3} />;
+    case "TreeView": return <TreeView items={[{ id: "1", label: "src", children: [{ id: "2", label: "components" }, { id: "3", label: "utils" }] }]} />;
+    case "CodeEditor": return <CodeEditor label="Migration" language="rust" defaultValue='fn main() {\n    println!("Hello, world!");\n}' />;
+    case "ConnectionForm": return <ConnectionForm open={true} onOpenChange={() => {}} />;
+    case "QueryEditor": return <QueryEditor defaultValue="SELECT * FROM users WHERE active = true" />;
+    case "ResultsGrid": return <ResultsGrid columns={[{ id: "name", name: "Name" }, { id: "role", name: "Role" }]} rows={[{ name: "Kong", role: "Admin" }]} />;
+    case "SchemaTree": return <SchemaTree items={[{ id: "db", name: "my_database", type: "schema" as const }, { id: "tbl", name: "users", type: "table" as const }, { id: "col", name: "id", type: "column" as const }]} />;
     default: return <Alert tone="info" title="Example unavailable">See the usage snippet below.</Alert>;
   }
 }
