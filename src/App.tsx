@@ -1355,7 +1355,7 @@ function ComponentPreview({ name }: ComponentPreviewProps): JSX.Element {
     case "Accordion": return <Accordion items={[{ id: "approval", title: "Approval workflow", content: "Pending orders route to the assigned approver." }, { id: "audit", title: "Audit information", content: "Changes are recorded with actor and timestamp." }]} />;
     case "DataTable": return <DataTable<Member> data={members} caption="Members" getRowId={(row) => row.id} selectable pageSize={3} />;
     case "TreeView": return <TreeView items={[{ id: "1", label: "src", children: [{ id: "2", label: "components" }, { id: "3", label: "utils" }] }]} />;
-    case "CodeEditor": return <CodeEditor label="Migration" language="rust" defaultValue='fn main() {\n    println!("Hello, world!");\n}' />;
+    case "CodeEditor": return <CodeEditor label="Migration" language="rust" defaultValue={"fn main() {\n    println!(\"Hello, world!\");\n}"} />;
     case "ConnectionForm": return <ConnectionForm open={true} onOpenChange={() => {}} />;
     case "QueryEditor": return <QueryEditor defaultValue="SELECT * FROM users WHERE active = true" />;
     case "ResultsGrid": return <ResultsGrid columns={[{ id: "name", name: "Name" }, { id: "role", name: "Role" }]} rows={[{ name: "Kong", role: "Admin" }]} />;
