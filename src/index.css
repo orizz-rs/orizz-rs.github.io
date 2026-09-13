@@ -318,7 +318,7 @@ h2 {
     color: var(--orizz-color-on-brand);
     background: var(--orizz-color-brand);
 }
-.page-content code {
+.page-content :not(pre) > code {
     display: block;
     color: var(--orizz-color-brand);
     font-family: var(--orizz-font-mono);
