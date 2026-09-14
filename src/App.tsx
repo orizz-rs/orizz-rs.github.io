@@ -56,6 +56,11 @@ import {
   QueryEditor,
   ResultsGrid,
   SchemaTree,
+  EditableResultGrid,
+  ResultsMultiGrid,
+  QueryStatusBar,
+  QueryHistoryPanel,
+  SavedQueriesModal,
   type TabItem,
 } from "@orizz-rs/ui";
 type DocId =
@@ -117,7 +122,7 @@ const componentGroups = [
   ["Data display", "DataTable · TreeView"],
   [
     "Compositions",
-    "CodeEditor · ConnectionForm · QueryEditor · ResultsGrid · SchemaTree",
+    "CodeEditor · ConnectionForm · QueryEditor · ResultsGrid · SchemaTree · EditableResultGrid · ResultsMultiGrid · QueryStatusBar · QueryHistoryPanel · SavedQueriesModal",
   ],
 ] as const;
 
@@ -248,153 +253,150 @@ const componentReferenceGroups: readonly ComponentCategory[] = [
   },
   {
     name: "Feedback",
-    description: "Communicate status, loading, and recovery paths",
+    description: "System alerts, badges, loading indicators, and empty states",
     components: [
       {
         name: "Alert",
-        use: "Show contextual status messages and warnings",
-        example: '<Alert tone="warning" title="Review access">...</Alert>',
+        use: "Callout for system messages with tone indicators",
+        example: '<Alert tone="info">System operational</Alert>',
       },
       {
         name: "Badge",
-        use: "Display short labels and statuses",
+        use: "Small visual tag for status or metadata",
         example: '<Badge tone="success">Active</Badge>',
       },
       {
         name: "Spinner",
-        use: "Indicate short loading states for an action or compact area",
-        example: '<Spinner label="Loading" />',
+        use: "Indicate loading state with accessible aria-label",
+        example: '<Spinner label="Loading..." />',
       },
       {
         name: "Toast",
-        use: "Show temporary feedback after an action",
-        example: '<Toast open={open} title="Saved" />',
+        use: "Transient notification overlay",
+        example: '<Toast title="Saved">Settings updated</Toast>',
       },
       {
         name: "Skeleton",
-        use: "Reserve content space while data loads",
-        example: '<Skeleton variant="rect" label="Loading card" />',
+        use: "Placeholder loading wireframe for content blocks",
+        example: '<Skeleton size="md" />',
       },
       {
         name: "EmptyState",
-        use: "Explain when no data or resource exists yet",
-        example: '<EmptyState title="No projects" />',
+        use: "Zero-data guidance with actionable primary button",
+        example: '<EmptyState title="No items" />',
       },
       {
         name: "ResultState",
-        use: "Present success, error, or actionable result states",
-        example: '<ResultState tone="success" title="Approved" />',
+        use: "Outcome header for success, warning, or error operations",
+        example: '<ResultState tone="success" title="Done" />',
       },
       {
         name: "Progress",
-        use: "Show progress through a task or workflow",
-        example: '<Progress value={65} label="Approval" />',
+        use: "Progress bar for completion percentages",
+        example: '<Progress value={75} showValue />',
       },
       {
         name: "LoadingOverlay",
-        use: "Block a content area while an operation is in progress",
-        example: "<LoadingOverlay open={loading}>...</LoadingOverlay>",
+        use: "Block surface interaction while background operation processes",
+        example: '<LoadingOverlay open={loading}>Content</LoadingOverlay>',
       },
     ],
   },
   {
     name: "Content",
-    description: "Group related content and represent identity",
+    description: "Structural containers and visual dividers",
     components: [
       {
         name: "Card",
-        use: "Group related content",
-        example: "<Card><CardContent>...</CardContent></Card>",
+        use: "Grouped surface with title, content, and optional footer",
+        example: '<Card><CardHeader>Title</CardHeader></Card>',
       },
       {
         name: "Avatar",
-        use: "Represent a user or entity",
-        example: '<Avatar alt="Kong" fallback="KS" />',
+        use: "User or entity portrait with fallback initials and status dot",
+        example: '<Avatar alt="User" fallback="US" status="online" />',
       },
       {
         name: "Divider",
-        use: "Separate groups of content",
-        example: "<Divider decorative />",
+        use: "Visual separator between content blocks",
+        example: "<Divider />",
       },
     ],
   },
   {
     name: "Navigation",
-    description: "Wayfinding, workflows, and application shell structure",
+    description: "Navigation menus, breadcrumbs, tabs, and step indicators",
     components: [
       {
         name: "Breadcrumb",
-        use: "Show the current location in a hierarchy",
-        example: "<Breadcrumb items={items} />",
+        use: "Hierarchical location links",
+        example: '<Breadcrumb items={items} />',
       },
       {
         name: "Tabs",
-        use: "Switch between views in the same context",
-        example: "<Tabs items={tabs} />",
+        use: "Switch between parallel views",
+        example: '<Tabs items={tabs} />',
       },
       {
         name: "Pagination",
-        use: "Move between pages in a collection",
-        example:
-          "<Pagination currentPage={1} totalPages={5} onPageChange={setPage} />",
+        use: "Navigate numbered pages of results",
+        example: '<Pagination currentPage={1} totalPages={10} />',
       },
       {
         name: "Sidebar",
-        use: "Provide primary navigation for an application shell",
-        example: "<Sidebar groups={groups} />",
+        use: "Collapsible vertical navigation sidebar",
+        example: '<Sidebar groups={groups} />',
       },
       {
         name: "NavigationMenu",
-        use: "Build expandable and collapsible navigation menus",
-        example: "<NavigationMenu items={items} />",
+        use: "Horizontal top bar navigation link set",
+        example: '<NavigationMenu items={items} />',
       },
       {
         name: "PageHeader",
-        use: "Present a page title, description, and actions",
-        example: '<PageHeader title="Orders" />',
+        use: "Standardized title banner with description and action buttons",
+        example: '<PageHeader title="Orders" actions={<Button>New</Button>} />',
       },
       {
         name: "Toolbar",
-        use: "Group related filters and actions",
-        example:
-          "<Toolbar start={<span>6 rows</span>} end={<Button>Filter</Button>} />",
+        use: "Action bar for action controls, search, and page utilities",
+        example: '<Toolbar start={<span>Count</span>} end={<Button>Filter</Button>} />',
       },
       {
         name: "SplitPane",
-        use: "Divide primary and detail content areas",
-        example: "<SplitPane first={<List />} second={<Detail />} />",
+        use: "Resizable two-column layout pane",
+        example: '<SplitPane first={<div />} second={<div />} />',
       },
       {
         name: "Stepper",
-        use: "Show the steps in a workflow",
+        use: "Sequential step progress indicator",
         example: '<Stepper items={steps} current="review" />',
       },
       {
         name: "Timeline",
-        use: "Show chronological events and audit history",
-        example: "<Timeline items={events} />",
+        use: "Chronological event log timeline",
+        example: '<Timeline items={events} />',
       },
     ],
   },
   {
-    name: "Overlays & disclosure",
-    description: "Temporary interactions and disclosed content",
+    name: "Overlays",
+    description: "Modals, popovers, and expandable accordions",
     components: [
       {
         name: "Dialog",
-        use: "Request a decision or input in a modal interaction",
-        example: '<Dialog open={open} title="Confirm">...</Dialog>',
+        use: "Modal dialog with focus trap and accessible backdrop",
+        example: '<Dialog open={open} title="Confirm">Body</Dialog>',
       },
       {
         name: "Popover",
-        use: "Show temporary content anchored to a trigger",
-        example:
-          "<Popover open={open} trigger={<Button>Filter</Button>}>...</Popover>",
+        use: "Contextual floating card triggered by an action element",
+        example: '<Popover trigger={<Button>Filter</Button>}>Form</Popover>',
       },
       {
         name: "Accordion",
-        use: "Expand and collapse multiple content sections",
-        example: "<Accordion items={sections} />",
+        use: "Expandable content disclosure panels",
+        example: '<Accordion items={items} />',
       },
     ],
   },
@@ -442,6 +444,31 @@ const componentReferenceGroups: readonly ComponentCategory[] = [
         name: "SchemaTree",
         use: "Browse database schemas, tables, and columns",
         example: '<SchemaTree items={nodes} onNodeSelect={handleSelect} />',
+      },
+      {
+        name: "EditableResultGrid",
+        use: "Display and directly edit query result cells with diff tracking, revert, and save handlers",
+        example: '<EditableResultGrid columns={columns} rows={rows} onSave={handleSave} />',
+      },
+      {
+        name: "ResultsMultiGrid",
+        use: "Display multiple query result sets in tabbed views with optional editing and export",
+        example: '<ResultsMultiGrid results={results} />',
+      },
+      {
+        name: "QueryStatusBar",
+        use: "Show query execution status, execution duration, affected row counts, and errors",
+        example: '<QueryStatusBar status="success" durationMs={45} affectedRows={12} />',
+      },
+      {
+        name: "QueryHistoryPanel",
+        use: "Browse and reload recently executed SQL query history",
+        example: '<QueryHistoryPanel history={history} onSelect={handleSelect} />',
+      },
+      {
+        name: "SavedQueriesModal",
+        use: "Manage and load saved SQL queries in a dialog modal",
+        example: '<SavedQueriesModal open={open} onOpenChange={setOpen} queries={queries} />',
       },
     ],
   },
@@ -1251,7 +1278,10 @@ function ComponentDetail({ component }: ComponentDetailProps): JSX.Element {
     component.name === "Combobox" ||
     component.name === "AsyncCombobox" ||
     component.name === "MultiSelect" ||
-    component.name === "Popover";
+    component.name === "Popover" ||
+    component.name === "EditableResultGrid" ||
+    component.name === "ResultsMultiGrid" ||
+    component.name === "SavedQueriesModal";
   return (
     <DocPage eyebrow={category?.name ?? "Component"} title={component.name} description={component.use}>
       <Card className={`live-card ${needsExpandedPreview ? "live-card--expanded" : ""}`}>
@@ -1291,6 +1321,7 @@ interface ComponentPreviewProps {
 
 function ComponentPreview({ name }: ComponentPreviewProps): JSX.Element {
   const [open, setOpen] = useState(false);
+  const [savedModalOpen, setSavedModalOpen] = useState(false);
   const [page, setPage] = useState(2);
   const [step, setStep] = useState("review");
   const tabs: readonly TabItem[] = [
@@ -1360,6 +1391,11 @@ function ComponentPreview({ name }: ComponentPreviewProps): JSX.Element {
     case "QueryEditor": return <QueryEditor defaultValue="SELECT * FROM users WHERE active = true" />;
     case "ResultsGrid": return <ResultsGrid columns={[{ id: "name", name: "Name" }, { id: "role", name: "Role" }]} rows={[{ name: "Kong", role: "Admin" }]} />;
     case "SchemaTree": return <SchemaTree items={[{ id: "db", name: "my_database", type: "schema" as const }, { id: "tbl", name: "users", type: "table" as const }, { id: "col", name: "id", type: "column" as const }]} />;
+    case "EditableResultGrid": return <EditableResultGrid columns={[{ id: "id", name: "ID" }, { id: "username", name: "Username" }, { id: "role", name: "Role" }]} rows={[{ id: "usr-1", username: "narin", role: "Product" }, { id: "usr-2", username: "mali", role: "Engineering" }]} getRowId={(r) => String(r.id)} />;
+    case "ResultsMultiGrid": return <ResultsMultiGrid results={[{ id: "res-1", title: "Users", columns: [{ id: "id", name: "ID" }, { id: "name", name: "Name" }], rows: [{ id: "usr-01", name: "Narin" }], durationMs: 24, affectedRows: 1 }, { id: "res-2", title: "Orders", columns: [{ id: "id", name: "PO #" }, { id: "amount", name: "Amount" }], rows: [{ id: "po-1001", amount: "฿25,000" }], durationMs: 38, affectedRows: 1 }]} />;
+    case "QueryStatusBar": return <QueryStatusBar status="success" durationMs={42} affectedRows={12} totalRows={12} resultSetIndex={1} totalResultSets={1} />;
+    case "QueryHistoryPanel": return <QueryHistoryPanel history={["SELECT * FROM users WHERE active = true;", "UPDATE orders SET status = 'completed' WHERE id = 101;", "SELECT COUNT(*) FROM audit_logs;"]} />;
+    case "SavedQueriesModal": return <><Button onClick={() => setSavedModalOpen(true)}>Open Saved Queries Modal</Button><SavedQueriesModal open={savedModalOpen} onOpenChange={setSavedModalOpen} queries={[{ id: "q1", name: "Active Users Count", sql: "SELECT COUNT(*) FROM users WHERE active = true;", createdAt: "2026-09-14" }, { id: "q2", name: "Recent Orders", sql: "SELECT * FROM orders ORDER BY created_at DESC LIMIT 10;", createdAt: "2026-09-14" }]} /></>;
     default: return <Alert tone="info" title="Example unavailable">See the usage snippet below.</Alert>;
   }
 }

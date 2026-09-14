@@ -604,6 +604,99 @@ export function SchemaBrowser(): JSX.Element {
     void fetch('/api/analytics/schema-click', { method: 'POST', body: JSON.stringify({ id: node.id, type: node.type }) })
   }} />
 }`,
+  EditableResultGrid: `import { useState } from 'react'
+import { EditableResultGrid, type ResultColumn, type ResultRow, type CellChange } from '@orizz-rs/ui'
+
+const columns: readonly ResultColumn[] = [
+  { id: 'id', name: 'ID' },
+  { id: 'username', name: 'Username' },
+  { id: 'role', name: 'Role' },
+]
+
+const initialRows: readonly ResultRow[] = [
+  { id: 'usr-1', username: 'narin', role: 'Product' },
+  { id: 'usr-2', username: 'mali', role: 'Engineering' },
+]
+
+export function EditableQueryResults(): JSX.Element {
+  const [rows, setRows] = useState(initialRows)
+
+  function handleSave(changes: readonly CellChange[]): void {
+    void fetch('/api/query/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ changes }),
+    })
+  }
+
+  return <EditableResultGrid columns={columns} rows={rows} getRowId={(r) => String(r.id)} onSave={handleSave} />
+}`,
+  ResultsMultiGrid: `import { ResultsMultiGrid, type ResultSet } from '@orizz-rs/ui'
+
+const results: readonly ResultSet[] = [
+  {
+    id: 'set-1',
+    title: 'Active Users',
+    columns: [{ id: 'id', name: 'ID' }, { id: 'name', name: 'Name' }],
+    rows: [{ id: 'usr-01', name: 'Narin' }],
+    durationMs: 32,
+    affectedRows: 1,
+  },
+  {
+    id: 'set-2',
+    title: 'Audit Logs',
+    columns: [{ id: 'id', name: 'Log ID' }, { id: 'action', name: 'Action' }],
+    rows: [{ id: 'log-101', action: 'user.login' }],
+    durationMs: 45,
+    affectedRows: 1,
+  },
+]
+
+export function MultiTabResults(): JSX.Element {
+  return <ResultsMultiGrid results={results} />
+}`,
+  QueryStatusBar: `import { QueryStatusBar } from '@orizz-rs/ui'
+
+export function QueryExecutionFooter(): JSX.Element {
+  return <QueryStatusBar status="success" durationMs={128} affectedRows={42} totalRows={42} resultSetIndex={1} totalResultSets={1} />
+}`,
+  QueryHistoryPanel: `import { useState } from 'react'
+import { QueryHistoryPanel } from '@orizz-rs/ui'
+
+const historyList = [
+  'SELECT * FROM users WHERE active = true;',
+  'UPDATE orders SET status = \\'shipped\\' WHERE id = 104;',
+  'SELECT count(*) FROM audit_logs;',
+]
+
+export function QueryHistorySidebar(): JSX.Element {
+  const [activeSql, setActiveSql] = useState('')
+
+  return (
+    <div>
+      <QueryHistoryPanel history={historyList} onSelect={(sql) => setActiveSql(sql)} />
+      {activeSql && <p>Selected query: {activeSql}</p>}
+    </div>
+  )
+}`,
+  SavedQueriesModal: `import { useState } from 'react'
+import { Button, SavedQueriesModal, type SavedQuery } from '@orizz-rs/ui'
+
+const savedQueries: readonly SavedQuery[] = [
+  { id: 'q-1', name: 'Monthly Active Users', sql: 'SELECT count(*) FROM users WHERE last_login > NOW() - INTERVAL \\'30 days\\';' },
+  { id: 'q-2', name: 'Pending Orders', sql: 'SELECT * FROM orders WHERE status = \\'pending\\';' },
+]
+
+export function SavedQueriesManager(): JSX.Element {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <div>
+      <Button onClick={() => setOpen(true)}>Saved Queries</Button>
+      <SavedQueriesModal open={open} onOpenChange={setOpen} queries={savedQueries} onLoadQuery={(q) => console.log('Loading:', q)} />
+    </div>
+  )
+}`,
 };
 
 export function getIntegrationExample(name: string): string {
