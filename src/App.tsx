@@ -646,7 +646,7 @@ function DocsSite({ onHome }: DocsSiteProps): JSX.Element {
         </button>
         <span className="header-caption">Design system documentation</span>
         <div className="header-actions">
-          <Badge tone="success">v0.5.0</Badge>
+          <Badge tone="success">v0.6.0</Badge>
           <a
             href="https://github.com/orizz-rs/orizz-ui"
             target="_blank"
